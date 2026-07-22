@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Bookings</title>
+    <!-- Importing Bootstrap for styling the table -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Reusable Navbar for the Employee Portal -->
+    <nav class="navbar navbar-dark bg-dark mb-5">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Bus Terminal - Employee Portal</span>
+            <div class="d-flex align-items-center">
+                <!-- Providing a back button to easily return to the dashboard -->
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm me-3">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">All Passenger Bookings</h2>
+        
+        <!-- DYNAMIC MESSAGES BLOCK -->
+        <!-- This will show the green "Success!" banner when a ticket is confirmed -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <!-- Bootstrap classes for a responsive, striped data table -->
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Passenger Name</th>
+                            <th>Trip Details</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Seat #</th>
+                            <th>Fare Paid</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 
+                          This loop looks for the 'tickets' dictionary key sent by the view.
+                        -->
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.passenger_name }}</td>
+                            <td>{{ ticket.trip }}</td>
+                            <td>{{ ticket.origin }}</td>
+                            <td>{{ ticket.destination }}</td>
+                            <td>{{ ticket.seat_number }}</td>
+                            <td>Rs. {{ ticket.fare_paid }}</td>
+                           <td>
+                                <!-- We pass the specific ticket.id to the URL so Django knows which one to process -->
+                                <a href="{% url 'edit_ticket' ticket.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{% url 'delete_ticket' ticket.id %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                        
+                        <!-- If the database is truly empty, show this -->
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No tickets have been booked yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP JS: Required for the alert 'X' button to function properly -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
